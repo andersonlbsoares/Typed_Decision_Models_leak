@@ -1,0 +1,53 @@
+dataset,subset,labels_task,labels_train,labels_test,labels_common,min_count
+emotion,"full sample (2,000)",6,6.0,6.0,6.0,
+emotion,"Qwen-7B / Laya-ML subset (first 1,000)",6,6.0,6.0,6.0,
+agnews,"full sample (2,000)",4,4.0,4.0,4.0,
+agnews,"Qwen-7B / Laya-ML subset (first 1,000)",4,4.0,4.0,4.0,
+rotten,"full sample (2,000)",2,2.0,2.0,2.0,
+rotten,"Qwen-7B / Laya-ML subset (first 1,000)",2,1.0,2.0,1.0,
+yahoo,"full sample (2,000)",10,10.0,10.0,10.0,
+yahoo,"Qwen-7B / Laya-ML subset (first 1,000)",10,10.0,10.0,10.0,
+banking77,"full sample (2,000)",72,72.0,72.0,72.0,
+banking77,"Qwen-7B / Laya-ML subset (first 1,000)",72,36.0,36.0,36.0,
+amazon,"full sample (2,000)",2,2.0,2.0,2.0,
+amazon,"Qwen-7B / Laya-ML subset (first 1,000)",2,2.0,2.0,2.0,
+imdb,"full sample (2,000)",2,2.0,2.0,2.0,
+imdb,"Qwen-7B / Laya-ML subset (first 1,000)",2,1.0,1.0,1.0,
+yelp,"full sample (2,000)",2,2.0,2.0,2.0,
+yelp,"Qwen-7B / Laya-ML subset (first 1,000)",2,2.0,2.0,2.0,
+massive,"full sample (2,000)",58,58.0,58.0,58.0,
+massive,"Qwen-7B / Laya-ML subset (first 1,000)",58,37.0,44.0,35.0,
+wikitoxic,"full sample (2,000)",2,2.0,2.0,2.0,
+wikitoxic,"Qwen-7B / Laya-ML subset (first 1,000)",2,2.0,2.0,2.0,
+emotion,grid: exposed training items (first 25),6,6.0,,,2.0
+emotion,grid: exposed training items (first 50),6,6.0,,,4.0
+emotion,grid: exposed training items (first 100),6,6.0,,,12.0
+emotion,grid: exposed training items (first 250),6,6.0,,,39.0
+emotion,grid: exposed training items (first 1000),6,6.0,,,153.0
+emotion,grid: test items 0-499 (exposed in S2),6,,6.0,,13.0
+emotion,grid: test items 500-999 (held out),6,,6.0,,17.0
+emotion,"grid: test items 500-1,999 (held out, 1,500)",6,,6.0,,53.0
+agnews,grid: exposed training items (first 25),4,4.0,,,1.0
+agnews,grid: exposed training items (first 50),4,4.0,,,8.0
+agnews,grid: exposed training items (first 100),4,4.0,,,22.0
+agnews,grid: exposed training items (first 250),4,4.0,,,55.0
+agnews,grid: exposed training items (first 1000),4,4.0,,,237.0
+agnews,grid: test items 0-499 (exposed in S2),4,,4.0,,101.0
+agnews,grid: test items 500-999 (held out),4,,4.0,,113.0
+agnews,"grid: test items 500-1,999 (held out, 1,500)",4,,4.0,,353.0
+yelp,grid: exposed training items (first 25),2,2.0,,,12.0
+yelp,grid: exposed training items (first 50),2,2.0,,,25.0
+yelp,grid: exposed training items (first 100),2,2.0,,,48.0
+yelp,grid: exposed training items (first 250),2,2.0,,,110.0
+yelp,grid: exposed training items (first 1000),2,2.0,,,481.0
+yelp,grid: test items 0-499 (exposed in S2),2,,2.0,,233.0
+yelp,grid: test items 500-999 (held out),2,,2.0,,236.0
+yelp,"grid: test items 500-1,999 (held out, 1,500)",2,,2.0,,733.0
+yahoo,grid: exposed training items (first 25),10,8.0,,,1.0
+yahoo,grid: exposed training items (first 50),10,10.0,,,1.0
+yahoo,grid: exposed training items (first 100),10,10.0,,,3.0
+yahoo,grid: exposed training items (first 250),10,10.0,,,11.0
+yahoo,grid: exposed training items (first 1000),10,10.0,,,64.0
+yahoo,grid: test items 0-499 (exposed in S2),10,,10.0,,27.0
+yahoo,grid: test items 500-999 (held out),10,,10.0,,32.0
+yahoo,"grid: test items 500-1,999 (held out, 1,500)",10,,10.0,,82.0

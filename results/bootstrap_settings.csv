@@ -1,0 +1,11 @@
+analysis,script,resampling_unit,stratification,B,notes
+probe A classification audit (39 contrasts + marginal gaps),analysis/audit.py,item,split x gold label,50000,"run as: python analysis/audit.py 50000"
+typed-decisions probe A,analysis/typed.py,state (all questions kept together),split x workflow,20000,"run as: python analysis/typed.py 20000; absent strata dropped with renormalized weights; diagnostics + >=10-state sensitivity"
+test/validation contrasts and probe C,analysis/probe_bc.py,item,split x gold label,50000,hard-coded
+controlled exposure (pooled over seeds),analysis/grid.py,item,split x gold label,10000,"run as: python analysis/grid.py 10000"
+controlled exposure (per seed),analysis/grid.py,item,split x gold label,2000,
+Kev members vs fresh / dev-cal,analysis/kev.py,underlying item,source,10000,"absent strata dropped with renormalized weights; diagnostics + >=10-cluster sensitivity"
+Kev per source,analysis/kev.py,underlying item,source,5000,
+Nimble-9B,analysis/nimble.py,task family,group (34 training / 6 evaluation families),50000,"also conditional on training set"
+near-duplicate slopes,analysis/neardup.py,state,workflow,5000,
+Emotion split-overlap sensitivity,analysis/overlap_emotion.py,item,split x gold label,50000,

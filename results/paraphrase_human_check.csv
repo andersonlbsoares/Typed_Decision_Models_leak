@@ -1,0 +1,61 @@
+item,id,dataset,split,gold,paraphraser,displayed_truncated_400,rotulo_preservado (S/N/?),significado_preservado (S/N/?)
+P01,emotion:test:350,emotion,test,sadness,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P02,emotion:train:3258,emotion,train,surprise,Qwen2.5-7B-Instruct (r4_para.json),False,S,N
+P03,yahoo:train:10385,yahoo,train,Business & Finance,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P04,banking77:train:697,banking77,train,extra_charge_on_statement,Qwen2.5-7B-Instruct (r4_para.json),False,?,N
+P05,yahoo:test:17196,yahoo,test,Business & Finance,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P06,banking77:test:775,banking77,test,wrong_amount_of_cash_received,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P07,yelp:test:4799,yelp,test,negative,Qwen2.5-7B-Instruct (r4_para.json),True,S,N
+P08,emotion:train:2168,emotion,train,sadness,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P09,banking77:test:156,banking77,test,card_payment_wrong_exchange_rate,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P10,banking77:test:293,banking77,test,card_delivery_estimate,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P11,agnews:test:68,agnews,test,Sports,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P12,emotion:test:996,emotion,test,surprise,Qwen2.5-7B-Instruct (r4_para.json),False,?,N
+P13,yahoo:train:191901,yahoo,train,Computers & Internet,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P14,emotion:train:2110,emotion,train,surprise,Qwen2.5-7B-Instruct (r4_para.json),False,?,N
+P15,agnews:test:2582,agnews,test,Sci/Tech,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P16,yahoo:train:505758,yahoo,train,Society & Culture,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P17,yahoo:test:1547,yahoo,test,Education & Reference,Qwen2.5-7B-Instruct (r4_para.json),False,S,N
+P18,yelp:train:244573,yelp,train,positive,Qwen2.5-7B-Instruct (r4_para.json),True,S,S
+P19,agnews:test:2191,agnews,test,Sci/Tech,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P20,yahoo:train:381138,yahoo,train,Computers & Internet,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P21,yahoo:train:60364,yahoo,train,Business & Finance,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P22,agnews:test:2428,agnews,test,Sci/Tech,Qwen2.5-7B-Instruct (r4_para.json),False,S,N
+P23,agnews:test:2006,agnews,test,Sci/Tech,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P24,yahoo:test:9528,yahoo,test,Politics & Government,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P25,yelp:test:2000,yelp,test,positive,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P26,emotion:test:909,emotion,test,love,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P27,agnews:test:2112,agnews,test,Sci/Tech,Qwen2.5-7B-Instruct (r4_para.json),False,S,N
+P28,banking77:train:1518,banking77,train,lost_or_stolen_card,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P29,emotion:test:632,emotion,test,fear,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P30,banking77:test:1445,banking77,test,atm_support,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P31,yelp:test:15852,yelp,test,positive,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P32,agnews:train:40106,agnews,train,World,Qwen2.5-7B-Instruct (r4_para.json),False,S,N
+P33,yelp:train:149520,yelp,train,negative,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P34,banking77:test:703,banking77,test,cancel_transfer,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P35,yelp:test:18621,yelp,test,positive,Qwen2.5-7B-Instruct (r4_para.json),True,S,N
+P36,agnews:test:1268,agnews,test,Sci/Tech,Qwen2.5-7B-Instruct (r4_para.json),False,S,N
+P37,yelp:train:174257,yelp,train,positive,Qwen2.5-7B-Instruct (r4_para.json),True,S,N
+P38,emotion:test:578,emotion,test,fear,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P39,yelp:train:93888,yelp,train,positive,Qwen2.5-7B-Instruct (r4_para.json),False,S,N
+P40,banking77:train:5053,banking77,train,declined_cash_withdrawal,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P41,yahoo:train:236014,yahoo,train,Family & Relationships,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P42,yahoo:train:694121,yahoo,train,Business & Finance,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P43,emotion:train:2573,emotion,train,anger,Qwen2.5-7B-Instruct (r4_para.json),False,S,N
+P44,emotion:test:130,emotion,test,joy,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P45,yahoo:test:5493,yahoo,test,Business & Finance,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P46,agnews:train:1413,agnews,train,Sci/Tech,Qwen2.5-7B-Instruct (r4_para.json),False,S,N
+P47,banking77:test:548,banking77,test,pin_blocked,Qwen2.5-7B-Instruct (r4_para.json),False,S,N
+P48,banking77:test:388,banking77,test,card_not_working,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P49,yelp:test:15757,yelp,test,positive,Qwen2.5-7B-Instruct (r4_para.json),True,S,N
+P50,yahoo:train:633035,yahoo,train,Education & Reference,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P51,banking77:train:3330,banking77,train,balance_not_updated_after_cheque_or_cash_deposit,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P52,banking77:test:1347,banking77,test,topping_up_by_card,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P53,agnews:train:13578,agnews,train,Sci/Tech,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P54,agnews:test:875,agnews,test,Sports,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P55,yahoo:test:26975,yahoo,test,Health,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P56,banking77:train:1309,banking77,train,card_not_working,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P57,yelp:test:6941,yelp,test,positive,Qwen2.5-7B-Instruct (r4_para.json),True,S,N
+P58,yelp:test:14507,yelp,test,negative,Qwen2.5-7B-Instruct (r4_para.json),True,S,N
+P59,yahoo:train:272167,yahoo,train,Health,Qwen2.5-7B-Instruct (r4_para.json),False,S,S
+P60,agnews:test:114,agnews,test,Sci/Tech,Qwen2.5-7B-Instruct (r4_para.json),False,S,S

@@ -1,6 +1,6 @@
 # Typed-decision models: output-only exposure diagnostics
 
-Anonymized research artifact for the submission *Did It See the Training Split? Output-Only Exposure Diagnostics for Typed-Decision Models*.
+Anonymized research artifact for the submission *Output-Only Diagnostics of Training-Split Exposure in Typed-Decision Models*.
 It contains the evaluation scripts, per-item predictions, fixed sample IDs, the analysis code and the machine-readable results behind every table and figure. Public benchmark data are not redistributed; scripts that need them say which file and revision to place in `data/`.
 
 Quick start (all tables from the stored predictions, no GPU needed):

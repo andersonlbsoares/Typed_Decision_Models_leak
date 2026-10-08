@@ -198,7 +198,7 @@ for ds in ['emotion', 'agnews', 'rotten', 'yahoo', 'banking77', 'amazon', 'imdb'
     la.append(DSN[ds] + ' & ' + ' & '.join(cells) + ' \\\\')
 W('tab_audit', r"""\begin{table*}[t]
 \centering\scriptsize
-\caption{Probe A for Julia-1 on ten classification datasets (BTZSC hypotheses as options), pp. Column 2: label-standardized train$-$test gap. Columns 3--6: Julia-1's gap minus the reference model's gap on the same items (paired, same strata and weights). 95\% CIs from a bootstrap stratified by split$\times$label (50{,}000 resamples). $^*$Holm-adjusted $p<0.05$ over the 39 contrasts (shift test; Section~\ref{sec:method}). DeBERTa contrasts use 2{,}000/2{,}000 items (Rotten Tomatoes: 2{,}000/1{,}066); Qwen-7B and Laya-ML use the 1{,}000/1{,}000 subsets on which they were run. $^\flat$Restricted common support: the subset lacks some labels in one split (Rotten Tomatoes/Qwen: positive class only; IMDB: one class in both subsets; Banking77: 36 of 72 intents; MASSIVE: 35 of 58 intents), so the contrast covers only the shared labels (Table~\ref{tab:support}).}
+\caption{Probe A for Julia-1 on ten classification datasets (BTZSC hypotheses as options), pp. Column 2: label-standardized train$-$test gap. Columns 3--6: Julia-1's gap minus the reference model's gap on the same items (paired, same strata and weights). 95\% CIs from a bootstrap stratified by split$\times$label (50{,}000 resamples). $^*$Holm-adjusted $p<0.05$ over the 39 contrasts (shift test; Section~\ref{sec:method}). All contrasts use the complete 2{,}000/2{,}000 samples (Rotten Tomatoes: 2{,}000/1{,}066) and cover every label.}
 \label{tab:audit}
 \setlength{\tabcolsep}{3pt}
 \begin{tabular}{llllll}
@@ -224,7 +224,7 @@ for ds in DSN:
         first = False
 W('tab_supp_audit', r"""\begin{table}[!tb]
 \centering\scriptsize
-\caption{All 39 classification-audit contrasts: Julia-1's standardized train$-$test gap minus the reference model's on paired items (pp, 95\% CI), with Holm-adjusted $p$ over the 39 (shift test, $B=50{,}000$). DeB-c: DeBERTa-c; all-33: DeBERTa all-33; Qwen: Qwen-7B; Laya: Laya-ML. $^\flat$Restricted label support (Table~\ref{tab:support}). Raw $p$, BH $q$, reference gaps and sample metadata: \texttt{results/audit\_did\_39.csv}, \texttt{audit\_gaps.csv}.}
+\caption{All 39 classification-audit contrasts: Julia-1's standardized train$-$test gap minus the reference model's on paired items (pp, 95\% CI), with Holm-adjusted $p$ over the 39 (shift test, $B=50{,}000$). DeB-c: DeBERTa-c; all-33: DeBERTa all-33; Qwen: Qwen-7B; Laya: Laya-ML. Raw $p$, BH $q$, reference gaps and sample metadata: \texttt{results/audit\_did\_39.csv}, \texttt{audit\_gaps.csv}.}
 \label{tab:supp_audit}
 \setlength{\tabcolsep}{4pt}
 \begin{tabular}{lllr}
@@ -237,30 +237,34 @@ Dataset & Ref. & Contrast [95\% CI] & $p_{\text{Holm}}$ \\
 \end{table}
 """)
 
-# ---------------- label support of restricted subsets (S01)
-SP = pd.read_csv('results/label_support_subsets.csv')
-lsp = []
-for ds in ['rotten', 'imdb', 'banking77', 'massive']:
-    r = SP[(SP.dataset == ds) & SP.subset.str.startswith('Qwen')].iloc[0]
-    refs = DD[(DD.dataset == ds) & DD.control.isin(['qwen7b', 'laya_ml'])]
-    cov = f"{100*refs.coverage_1.min():.1f}/{100*refs.coverage_2.min():.1f}"
-    lsp.append(f"{DSS[ds]} & {', '.join(CTS[c] for c in refs.control)} & {int(r.labels_task)} & {int(r.labels_train)}/{int(r.labels_test)} & {int(r.labels_common)} & {cov} \\\\")
-W('tab_support', r"""\begin{table}[!tb]
+# ---------------- diluted exposure (third revision, E1)
+E1 = pd.read_csv('results/r8_e1_power.csv'); E1M = pd.read_csv('results/r8_e1_membership_by_seed.csv')
+E1K = ['yahoo', 'agnews', 'yelp', 'emotion']
+ld = []
+for rho in [0.05, 0.1, 0.25, 0.5, 1.0]:
+    cells = []
+    for k in E1K:
+        r = E1[(E1.dataset == k) & (E1.epochs == 3) & (E1.rho == rho)].iloc[0]
+        v = s(r.did_rho0)
+        cells.append((f"\\textbf{{{v}}}" if r.did_rho0_lo > 0 else v) + f"$^{{{int(r.seeds_detected)}}}$")
+    ld.append(f"{rho:g} & " + ' & '.join(cells) + ' \\\\')
+mem = E1M[E1M.epochs == 3].groupby('dataset').est.mean()
+ld.append('\\midrule Per item & ' + ' & '.join(s(mem[k]) for k in E1K) + ' \\\\')
+W('tab_dilution', r"""\begin{table}[!tb]
 \centering\scriptsize
-\caption{Restricted label support of the 1{,}000-record reference subsets (first 1{,}000 stored records; samples are stored in source-file order). Task: gold labels in the audit universe (MASSIVE: 58 intents mapped; $k=59$ in Table~\ref{tab:btzsc} counts candidate hypotheses: \texttt{general\_quirky} has none, and the 4 \texttt{cooking\_query} training items are unmapped). Tr/te: labels in the train/test subsets; Com.: common to both (strata of Eq.~\ref{eq:std}); Cov.: \% of queried train/test records in common strata. Qwen = Qwen-7B, Laya = Laya-ML. All other subsets contain every label.}
-\label{tab:support}
-\setlength{\tabcolsep}{2.5pt}
-\begin{tabular}{llcccc}
+\caption{Probe A under diluted exposure: Julia-1 fine-tuned (3 epochs, 5 seeds) on 2{,}000 items, a fraction $\rho$ of the 2{,}000 audited training items plus filler items from the same training split. Entries: probe A minus that of the same-seed $\rho=0$ run (pp); bold: pooled 95\% CI above zero (item values averaged over seeds; $B=50{,}000$); superscript: seeds whose own CI ($B=5{,}000$) is above zero. Per item: exposed minus unexposed audited items (mean over seeds and $0<\rho<1$).}
+\label{tab:dilution}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lcccc}
 \toprule
-Dataset & Ref. & Task & Tr/te & Com. & Cov.\ (\%) \\
+$\rho$ & Yahoo & AG News & Yelp & Emotion \\
 \midrule
-""" + "\n".join(lsp) + r"""
+""" + "\n".join(ld) + r"""
 \bottomrule
 \end{tabular}
 \end{table}
 """)
 
-# ---------------- probe C
 C = pd.read_csv('results/probeC.csv'); CS = pd.read_csv('results/probeC_phi_complete_only.csv')
 lc = []
 for ds in ['emotion', 'agnews', 'banking77', 'yelp', 'yahoo']:

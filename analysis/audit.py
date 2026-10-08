@@ -5,8 +5,10 @@ from core import contrast, raw_diff, acc_vec, paired, holm, bh
 
 L = lambda p: json.load(gzip.open(p, 'rt'))
 e4 = L('predictions/r4_eval.json.gz')
-qw = L('predictions/r6_qwen.json.gz')
-lay = L('predictions/r6_laya.json.gz')
+# Reference models on the COMPLETE 2,000/2,000 samples (third revision; eval_scripts/r8). Qwen: the stored
+# top-20 admissibility rule (field 4, 'pred_top20'); Laya: multilingual checkpoint, rev. 55cf4c4e.
+qw = {'A': {k: {s: [[r[0], r[1], r[4]] for r in v[s]] for s in v} for k, v in L('predictions/r8_e3_qwen_full.json.gz')['A'].items()}}
+lay = L('predictions/r8_e3_laya_full.json.gz')
 ro = L('predictions/r6_rotten_eval.json.gz')
 B = int(sys.argv[1]) if len(sys.argv) > 1 else 50_000
 DS = ["emotion", "agnews", "rotten", "yahoo", "banking77", "amazon", "imdb", "yelp", "massive", "wikitoxic"]

@@ -9,7 +9,8 @@ Quick start (all tables from the stored predictions, no GPU needed):
 pip install -r requirements.txt
 python analysis/audit.py 50000 && python analysis/typed.py 20000 && python analysis/probe_bc.py
 python analysis/grid.py 10000 && python analysis/kev.py && python analysis/nimble.py && python analysis/sample_support.py
-python analysis/make_tables.py        # writes paper/tables/*.tex
+python analysis/r8_analysis.py 50000   # third revision: dilution (E1), reference overlap (E3), deterministic re-run (E4)
+python analysis/make_tables.py && python analysis/fig_audit.py   # paper/tables/*.tex, paper/figs/fig_audit.*
 ```
 
 Bootstrap sizes for every analysis are listed in `results/bootstrap_settings.csv`.
@@ -32,3 +33,15 @@ Run from this directory with Python 3.11 (numpy, pandas, scipy, statsmodels, sci
 - **Nimble.** `predictions/nimble/` (per-example correctness, family and kind), `results/nimble.csv`.
 - **MASSIVE label universe.** The English split has 60 intents; BTZSC has 59 hypotheses (none for `general_quirky`). `cooking_query` has a hypothesis but no BTZSC test example, so the name-based mapping in `eval_scripts/r4_data.py` leaves its 4 training items unmapped; it occurs only as a distractor option. The audit therefore has 58 gold labels and 59 candidate hypotheses (`results/massive_label_reconciliation.csv`).
 - `eval_scripts/` reference the GPU host's working directory only through relative paths; dataset and checkpoint revisions are pinned in the scripts and in the paper's Appendix.
+
+## Revision notes (third revision)
+
+- **Complete-sample references.** Qwen-7B and Laya-ML were re-run on the complete 2,000/2,000 audit samples
+  (`predictions/r8_e3_*`; scripts in `eval_scripts/r8/`). `analysis/audit.py` now uses them, so all 39 probe-A
+  contrasts cover every label; the restricted-support table was removed. On the items shared with the earlier
+  1,000-record runs, decisions agree on 98.5-100% (Qwen; transformers instead of vLLM) and >= 98.1% (Laya-ML):
+  `results/r8_e3_overlap_agreement.csv`. `sample_support.py` and the `label_support_*` files describe the earlier subsets.
+- **Deterministic re-run (E4).** `results/r8_e4_agreement.csv`, `results/r8_e4_probeA_by_mode.csv`.
+- **Diluted exposure (E1).** `results/r8_e1_power.csv`, `r8_e1_membership_by_seed.csv`, `r8_e1_base_vs_filler.csv`; table `tab_dilution`.
+- Samples were rebuilt on the GPU cluster from the stored item ids (`eval_scripts/r8/build_samples.py`), with every gold
+  label and every paraphrase-source text checked against the stored files.

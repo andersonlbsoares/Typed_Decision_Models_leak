@@ -9,3 +9,7 @@ Kev per source,analysis/kev.py,underlying item,source,5000,
 Nimble-9B,analysis/nimble.py,task family,group (34 training / 6 evaluation families),50000,"also conditional on training set"
 near-duplicate slopes,analysis/neardup.py,state,workflow,5000,
 Emotion split-overlap sensitivity,analysis/overlap_emotion.py,item,split x gold label,50000,
+diluted exposure E1 (pooled; vs rho=0 and vs pre-FT),analysis/r8_analysis.py,item (values averaged over 5 seeds),split x gold label,50000,"run as: python analysis/r8_analysis.py 50000"
+diluted exposure E1 (per seed; exposed vs unexposed),analysis/r8_analysis.py,item,split x gold label,5000,hard-coded
+deterministic re-run E4 (classification),analysis/r8_analysis.py,item,split x gold label,50000,
+deterministic re-run E4 (typed-decisions),analysis/r8_analysis.py,state (all questions kept together),split x workflow,20000,min(B; 20000)

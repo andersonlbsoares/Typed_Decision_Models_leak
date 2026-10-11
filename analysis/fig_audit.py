@@ -138,6 +138,7 @@ names = {'typed': 'typed-decisions', 'emotion': 'DAIR Emotion', 'agnews': 'AG Ne
          'amazon': 'Amazon Polarity', 'imdb': 'IMDB', 'yelp': 'Yelp Polarity',
          'massive': 'MASSIVE', 'wikitoxic': 'WikiToxic'}
 mods = [('julia', 'Julia-1', '#C8102E', 'o', 0),
+        ('jev', 'Jev 1.13 (closed, via API)', '#222222', 'X', 4),
         ('deberta_c', 'DeBERTa-c (reference)', '#4C72B0', 's', 1),
         ('qwen7b', 'Qwen2.5-7B-Instruct', '#55A868', 'D', 2),
         ('laya_ml', 'Laya multilingual', '#8172B2', '^', 3),
@@ -150,10 +151,15 @@ for _, r in GA.iterrows():
     if r.model != 'deberta_all33':
         rows.append((r.dataset, r.model, r.est, r.lo, r.hi))
 rows.append(('rotten', 'laya_en', layen_rot['est'], layen_rot['lo'], layen_rot['hi']))
+# Jev (second audited model; analysis/jev.py and analysis/jev_typed.py)
+JG = pd.read_csv('results/jev_audit_gaps.csv'); JT = pd.read_csv('results/jev_typed_probeA.csv')
+r = JT[(JT.kind == 'gap') & (JT.model == 'jev')].iloc[0]; rows.append(('typed', 'jev', r.est, r.lo, r.hi))
+for _, r in JG[JG.model == 'jev'].iterrows():
+    rows.append((r.dataset, 'jev', r.est, r.lo, r.hi))
 P = pd.DataFrame(rows, columns=['ds', 'model', 'est', 'lo', 'hi'])
 order = ['typed', 'emotion', 'agnews', 'rotten', 'yahoo', 'banking77', 'amazon', 'imdb', 'yelp', 'massive', 'wikitoxic']
 fig, ax = plt.subplots(figsize=(6.9, 3.9))
-off = {0: 0, 1: -0.18, 2: 0.18, 3: 0.34}
+off = {0: 0, 1: -0.18, 2: 0.18, 3: 0.34, 4: -0.34}
 seen = set()
 for i, ds in enumerate(order):
     for key, lab, col, mk, o in mods:
@@ -161,7 +167,7 @@ for i, ds in enumerate(order):
         if q.empty:
             continue
         r = q.iloc[0]; y = i + (-0.18 if key == 'laya_typed' else off[o])
-        foc = key == 'julia'
+        foc = key in ('julia', 'jev')
         ax.errorbar(r.est, y, xerr=[[r.est - r.lo], [r.hi - r.est]], fmt=mk, color=col,
                     ms=5 if foc else 3.5, lw=1.6 if foc else 0.8, alpha=1 if foc else 0.85,
                     mfc=col if foc else 'white', mec=col,
@@ -172,7 +178,7 @@ ax.set_yticks(range(len(order)))
 ax.set_yticklabels([names[o] for o in order])
 ax.invert_yaxis()
 ax.set_xlabel('Label-standardized train − test accuracy (pp), 95% CI')
-ax.set_title("Julia-1's training-split advantage is large on typed-decisions and DAIR Emotion")
+ax.set_title("Julia-1's training-split advantage is large on typed-decisions and DAIR Emotion; Jev shows none")
 jt = P[(P.ds == 'typed') & (P.model == 'julia')].iloc[0]
 ax.text(jt.est, -0.45, f'+{jt.est:.1f}', color='#C8102E', ha='center', va='bottom', fontsize=7)
 ax.legend(loc='lower right', fontsize=6)

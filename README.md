@@ -10,6 +10,7 @@ pip install -r requirements.txt
 python analysis/audit.py 50000 && python analysis/typed.py 20000 && python analysis/probe_bc.py
 python analysis/grid.py 10000 && python analysis/kev.py && python analysis/nimble.py && python analysis/sample_support.py
 python analysis/r8_analysis.py 50000   # third revision: dilution (E1), reference overlap (E3), deterministic re-run (E4)
+python analysis/jev.py 50000 && python analysis/jev_typed.py 50000   # Jev as a second audited model
 python analysis/make_tables.py && python analysis/fig_audit.py   # paper/tables/*.tex, paper/figs/fig_audit.*
 ```
 
@@ -45,3 +46,14 @@ Run from this directory with Python 3.11 (numpy, pandas, scipy, statsmodels, sci
 - **Diluted exposure (E1).** `results/r8_e1_power.csv`, `r8_e1_membership_by_seed.csv`, `r8_e1_base_vs_filler.csv`; table `tab_dilution`.
 - Samples were rebuilt on the GPU cluster from the stored item ids (`eval_scripts/r8/build_samples.py`), with every gold
   label and every paraphrase-source text checked against the stored files.
+
+## Revision notes (Jev)
+
+- **Jev 1.13 as a second audited model** (closed; OpenRouter `typesafe/jev-1.13`, snapshot `jev-1.13-20260917`), with its own
+  Holm families and never used as a reference. Same states, questions, option subsets and 700-token truncation as Julia-1,
+  one question per request. Collection code and the pre-registered plan: `eval_scripts/jev/`; predictions
+  `predictions/jev_1.13.json.gz`; raw responses `predictions/jev_raw.jsonl.gz`; request index (no texts)
+  `predictions/jev_request_index.jsonl.gz`.
+- Results: `results/jev_audit_gaps.csv`, `jev_audit_did_39.csv`, `jev_typed_probeA.csv`, `jev_typed_bootstrap_sensitivity.csv`,
+  `jev_three_split.csv`, `jev_probeC.csv`, `jev_pgold_probeA.csv` (exploratory), `jev_julia_agreement.csv` (descriptive).
+- BTZSC task-transfer accuracies (former appendix table) moved to `results/btzsc_transfer.csv`.

@@ -13,3 +13,6 @@ diluted exposure E1 (pooled; vs rho=0 and vs pre-FT),analysis/r8_analysis.py,ite
 diluted exposure E1 (per seed; exposed vs unexposed),analysis/r8_analysis.py,item,split x gold label,5000,hard-coded
 deterministic re-run E4 (classification),analysis/r8_analysis.py,item,split x gold label,50000,
 deterministic re-run E4 (typed-decisions),analysis/r8_analysis.py,state (all questions kept together),split x workflow,20000,min(B; 20000)
+Jev probe-A classification family (39) + p(gold),analysis/jev.py,item,split x gold label,50000,"run as: python analysis/jev.py 50000; Holm within Jev's 39"
+Jev typed-decisions probe A,analysis/jev_typed.py,state (all questions kept together),split x workflow,50000,"run as: python analysis/jev_typed.py 50000 (pre-registered B); Julia-1 rows reproduce typed.py up to Monte Carlo error"
+Jev three-split and probe C,analysis/jev.py,item,split x gold label,50000,"Holm within Jev's ten probe-C contrasts with DeBERTa-c"

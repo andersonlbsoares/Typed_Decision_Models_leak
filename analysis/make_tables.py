@@ -151,15 +151,18 @@ T = pd.read_csv('results/typed_probeA.csv')
 lab = {'julia': 'Julia-1', 'qwen7b': 'Qwen2.5-7B', 'laya_en': 'Laya (English)', 'laya_ml': 'Laya (multilingual)', 'laya_typed': 'Laya (typed-dec.)$^\\dagger$'}
 lt = []
 JTY = pd.read_csv('results/jev_typed_probeA.csv')   # Jev: second audited model (analysis/jev_typed.py, B = 50,000)
-def _row(name, r, dj=None, dv=None):
+MTY = pd.read_csv('results/msd1_typed_probeA.csv')  # Microsoft-Decision-1: third audited model (analysis/msd1_typed.py)
+def _row(name, r, dj=None, dv=None, dm=None):
     f = lambda d: '' if d is None else f"{s(d.est)} {ci(d.lo, d.hi)}"
-    return f"{name} & {r.acc_train:.3f} & {r.acc_test:.3f} & {s(r.raw)} & {s(r.est)} {ci(r.lo, r.hi)} & {f(dj)} & {f(dv)} \\\\"
+    return f"{name} & {r.acc_train:.3f} & {r.acc_test:.3f} & {s(r.est)} {ci(r.lo, r.hi)} & {f(dj)} & {f(dv)} & {f(dm)} \\\\"
 for _, r in T[T.kind == 'gap'].iterrows():
     if r.model == 'julia':
         lt.append(_row(lab['julia'], r))
         lt.append(_row('Jev 1.13', JTY[(JTY.kind == 'gap') & (JTY.model == 'jev')].iloc[0]))
+        lt.append(_row('Decision-1', MTY[(MTY.kind == 'gap') & (MTY.model == 'msd1')].iloc[0]))
     else:
-        lt.append(_row(lab[r.model], r, T[T.model == 'julia-' + r.model].iloc[0], JTY[JTY.model == 'jev-' + r.model].iloc[0]))
+        lt.append(_row(lab[r.model], r, T[T.model == 'julia-' + r.model].iloc[0], JTY[JTY.model == 'jev-' + r.model].iloc[0],
+                       MTY[MTY.model == 'msd1-' + r.model].iloc[0]))
 TD = T[T.model == 'julia'].iloc[0]; TSn = pd.read_csv('results/typed_bootstrap_sensitivity.csv')
 TSj = TSn[TSn.model == 'julia'].iloc[0]; TSq = TSn[TSn.model == 'julia-qwen7b'].iloc[0]
 typed_diag = (f"States are resampled within workflow ($B={int(TD.B)//1000}{{,}}000$), keeping all questions about a state together; in {100*T.frac_replicates_empty.mean():.0f}\\% of replicates "
@@ -168,14 +171,14 @@ typed_diag = (f"States are resampled within workflow ($B={int(TD.B)//1000}{{,}}0
               f"{s(TSq.est)} {ci(TSq.lo, TSq.hi)} for Julia-1 minus Qwen.")
 W('tab_typed', r"""\begin{table*}[t]
 \centering\scriptsize
-\caption{Probe A on typed-decisions (complete splits: 6{,}000 training and 2{,}000 test questions from 1{,}200 and 400 states). Columns 2--5: accuracies and gaps; columns 6--7: the audited model's standardized gap minus the reference model's on the same questions. Strata: workflow$\times$question$\times$gold (68 common strata, 99.95\% of training questions retained). 95\% CIs: state-cluster bootstrap, same states for both models in contrasts. """ + typed_diag + r""" Jev rows: $B=50{,}000$. $^\dagger$Checkpoint documented as tuned on the training split.}
+\caption{Probe A on typed-decisions (complete splits: 6{,}000 training and 2{,}000 test questions from 1{,}200 and 400 states). Columns 2--4: accuracies and label-standardized gaps; columns 5--7: the audited model's standardized gap minus the reference model's on the same questions. Strata: workflow$\times$question$\times$gold (68 common strata, 99.95\% of training questions retained). 95\% CIs: state-cluster bootstrap, same states for both models in contrasts. """ + typed_diag + r""" Jev and Decision-1 (Microsoft-Decision-1) rows: $B=50{,}000$. $^\dagger$Checkpoint documented as tuned on the training split.}
 \label{tab:typed}
-\setlength{\tabcolsep}{3pt}
+\setlength{\tabcolsep}{2.5pt}
 \begin{tabular}{lcccccc}
 \toprule
- & & & & & \multicolumn{2}{c}{Audited model minus reference} \\
-\cmidrule(lr){6-7}
-Model & Acc.\ tr. & Acc.\ te. & Raw & Std.\ [95\% CI] & Julia-1 & Jev \\
+ & & & & \multicolumn{3}{c}{Audited model minus reference} \\
+\cmidrule(lr){5-7}
+Model & Acc.\ tr. & Acc.\ te. & Std.\ [95\% CI] & Julia-1 & Jev & Decision-1 \\
 \midrule
 """ + "\n".join(lt) + r"""
 \bottomrule
@@ -186,11 +189,13 @@ Model & Acc.\ tr. & Acc.\ te. & Raw & Std.\ [95\% CI] & Julia-1 & Jev \\
 # ---------------- audit (main)
 GA = pd.read_csv('results/audit_gaps.csv'); DD = pd.read_csv('results/audit_did_39.csv')
 JGA = pd.read_csv('results/jev_audit_gaps.csv'); JDD = pd.read_csv('results/jev_audit_did_39.csv')
+MGA = pd.read_csv('results/msd1_audit_gaps.csv'); MDD = pd.read_csv('results/msd1_audit_did_39.csv')
 la = []
 for ds in ['emotion', 'agnews', 'rotten', 'yahoo', 'banking77', 'amazon', 'imdb', 'yelp', 'massive', 'wikitoxic']:
     j = GA[(GA.dataset == ds) & (GA.model == 'julia')].iloc[0]
     jv = JGA[(JGA.dataset == ds) & (JGA.model == 'jev')].iloc[0]
-    cells = [f"{s(j.est)} {ci(j.lo, j.hi)}", f"{s(jv.est)} {ci(jv.lo, jv.hi)}"]
+    mv = MGA[(MGA.dataset == ds) & (MGA.model == 'msd1')].iloc[0]
+    cells = [f"{s(j.est)} {ci(j.lo, j.hi)}", f"{s(jv.est)} {ci(jv.lo, jv.hi)}", f"{s(mv.est)} {ci(mv.lo, mv.hi)}"]
     for c in ['deberta_c', 'deberta_all33', 'qwen7b', 'laya_ml']:
         d = DD[(DD.dataset == ds) & (DD.control == c)]
         if d.empty: cells.append('--'); continue
@@ -201,14 +206,14 @@ for ds in ['emotion', 'agnews', 'rotten', 'yahoo', 'banking77', 'amazon', 'imdb'
     la.append(DSN[ds] + ' & ' + ' & '.join(cells) + ' \\\\')
 W('tab_audit', r"""\begin{table*}[t]
 \centering\scriptsize
-\caption{Probe A on ten classification datasets (BTZSC hypotheses as options), pp. Columns 2--3: label-standardized train$-$test gaps of Julia-1 and Jev. Columns 4--7: Julia-1's gap minus the reference model's gap on the same items (paired, same strata and weights; CIs in Table~\ref{tab:supp_audit}). 95\% CIs from a bootstrap stratified by split$\times$label (50{,}000 resamples). $^*$Holm-adjusted $p<0.05$ over the 39 contrasts (shift test; Section~\ref{sec:method}). All contrasts use the complete 2{,}000/2{,}000 samples (Rotten Tomatoes: 2{,}000/1{,}066) and cover every label. Jev's 39 contrasts (own Holm family): Table~\ref{tab:supp_audit}.}
+\caption{Probe A on ten classification datasets (BTZSC hypotheses as options), pp. Columns 2--4: label-standardized train$-$test gaps of Julia-1, Jev and Microsoft-Decision-1. Columns 5--8: Julia-1's gap minus the reference model's gap on the same items (paired, same strata and weights; CIs, and Jev's and Decision-1's own 39 contrasts, in Table~\ref{tab:supp_audit}). 95\% CIs from a bootstrap stratified by split$\times$label (50{,}000 resamples). $^*$Holm-adjusted $p<0.05$ over the 39 contrasts (shift test; Section~\ref{sec:method}). All contrasts use the complete 2{,}000/2{,}000 samples (Rotten Tomatoes: 2{,}000/1{,}066) and cover every label.}
 \label{tab:audit}
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{lllrrrr}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{llllrrrr}
 \toprule
- & \multicolumn{2}{c}{Gap} & \multicolumn{4}{c}{Julia-1 gap minus reference gap} \\
-\cmidrule(lr){2-3}\cmidrule(lr){4-7}
-Dataset & Julia-1 & Jev & DeBERTa-c & all-33 & Qwen-7B & Laya-ML \\
+ & \multicolumn{3}{c}{Gap} & \multicolumn{4}{c}{Julia-1 gap minus reference gap} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-8}
+Dataset & Julia-1 & Jev & Decision-1 & DeBERTa-c & all-33 & Qwen-7B & Laya-ML \\
 \midrule
 """ + "\n".join(la) + r"""
 \bottomrule
@@ -228,20 +233,22 @@ for ds in DSN:
         flat = '$^\\flat$' if d.strata_used < GA[(GA.dataset == ds) & (GA.model == 'julia')].iloc[0].strata_used else ''
         jd = JDD[(JDD.dataset == ds) & (JDD.control == c)].iloc[0]
         jv = (f"\\textbf{{{s(jd.est)}}}$^*$" if jd.p_holm < 0.05 else s(jd.est))
+        md = MDD[(MDD.dataset == ds) & (MDD.control == c)].iloc[0]
+        mv = (f"\\textbf{{{s(md.est)}}}$^*$" if md.p_holm < 0.05 else s(md.est))
         jt = (f"\\textbf{{{s(d.est)}}}$^*$" if d.p_holm < 0.05 else s(d.est))
-        ls_[ds].append(f"{DSS[ds] if first else ''} & {CTS[c]}{flat} & {jt} {ci(d.lo, d.hi)} & {ph(d.p_holm)} & {jv} & {ph(jd.p_holm)}")
+        ls_[ds].append(f"{DSS[ds] if first else ''} & {CTS[c]}{flat} & {jt} {ci(d.lo, d.hi)} & {ph(d.p_holm)} & {jv} & {mv}")
         first = False
 _h1 = [r for k in list(DSN)[:5] for r in ls_[k]]; _h2 = [r for k in list(DSN)[5:] for r in ls_[k]]
 _h1 += [' & & & & & '] * (len(_h2) - len(_h1))
 ls_ = [a + ' & ' + b + ' \\\\' for a, b in zip(_h1, _h2)]
 W('tab_supp_audit', r"""\begin{table*}[!tb]
 \centering\scriptsize
-\caption{All 39 classification-audit contrasts for each audited model: its standardized train$-$test gap minus the reference model's on paired items (pp, 95\% CI), with Holm-adjusted $p$ over that model's 39 contrasts (Jev CIs in \texttt{jev\_audit\_did\_39.csv}) (shift test, $B=50{,}000$); $^*p_{\text{Holm}}<0.05$. DeB-c: DeBERTa-c; all-33: DeBERTa all-33; Qwen: Qwen-7B; Laya: Laya-ML. Raw $p$, BH $q$, reference gaps and sample metadata: \texttt{results/audit\_did\_39.csv}, \texttt{audit\_gaps.csv}, \texttt{jev\_audit\_did\_39.csv}.}
+\caption{All 39 classification-audit contrasts per audited model: its standardized train$-$test gap minus the reference's on paired items (pp; shift test, $B=50{,}000$; Holm within each model's 39); $^*p_{\text{Holm}}<0.05$. Julia-1 with 95\% CI; Jev and Decision-1 (Microsoft-Decision-1) as estimates (CIs, raw $p$ and BH $q$ for all models in \texttt{results/*audit\_did\_39.csv}). DeB-c: DeBERTa-c; all-33: DeBERTa all-33; Qwen: Qwen-7B; Laya: Laya-ML.}
 \label{tab:supp_audit}
-\setlength{\tabcolsep}{2.5pt}
-\begin{tabular}{llllll@{\hspace{10pt}}llllll}
+\setlength{\tabcolsep}{2.2pt}
+\begin{tabular}{llllll@{\hspace{8pt}}llllll}
 \toprule
-Dataset & Ref. & Julia-1 & $p_{\text{H}}$ & Jev & $p_{\text{H}}$ & Dataset & Ref. & Julia-1 & $p_{\text{H}}$ & Jev & $p_{\text{H}}$ \\
+Dataset & Ref. & Julia-1 & $p_{\text{H}}$ & Jev & Dec.-1 & Dataset & Ref. & Julia-1 & $p_{\text{H}}$ & Jev & Dec.-1 \\
 \midrule
 """ + "\n".join(ls_) + r"""
 \bottomrule
@@ -310,7 +317,7 @@ lq = [f"Q{int(r.q)+1} ({r.lo:.2f}--{r.hi:.2f}) & {r.julia:.3f} & {r.qwen:.3f} \\
 sl = {r.model: r for _, r in NS.iterrows()}
 W('tab_neardup', r"""\begin{table}[!tb]
 \centering\scriptsize
-\caption{typed-decisions: test accuracy by quartile of the test state's maximum TF-IDF similarity (character 5-grams, full sorted-key JSON state) to the 1{,}200 training states; ranges are the empirical minimum and maximum in each quartile (no test state falls between 0.75 and 0.80); 100 states $=$ 500 questions per quartile. Slope: OLS of question-level correctness (0/1) on maximum similarity, both demeaned within workflow (unweighted questions), pp per 0.1; 95\% CI from a state-cluster bootstrap stratified by workflow ($B=5{,}000$). Julia-1 """ + f"{s(sl['Julia-1'].slope_per_0p1)} pp {ci(sl['Julia-1'].lo, sl['Julia-1'].hi)}; Qwen {s(sl['Qwen2.5-7B'].slope_per_0p1)} {ci(sl['Qwen2.5-7B'].lo, sl['Qwen2.5-7B'].hi)}; Julia-1 minus Qwen {s(sl['Julia-1 minus Qwen'].slope_per_0p1)} {ci(sl['Julia-1 minus Qwen'].lo, sl['Julia-1 minus Qwen'].hi)}" + r"""; this interval includes zero.}
+\caption{typed-decisions: test accuracy by quartile of the test state's maximum TF-IDF similarity (character 5-grams, full sorted-key JSON state) to the 1{,}200 training states; ranges are the empirical minimum and maximum in each quartile; 100 states $=$ 500 questions per quartile. Slope: OLS of question-level correctness (0/1) on maximum similarity, both demeaned within workflow (unweighted questions), pp per 0.1; 95\% CI from a state-cluster bootstrap stratified by workflow ($B=5{,}000$). Julia-1 """ + f"{s(sl['Julia-1'].slope_per_0p1)} pp {ci(sl['Julia-1'].lo, sl['Julia-1'].hi)}; Qwen {s(sl['Qwen2.5-7B'].slope_per_0p1)} {ci(sl['Qwen2.5-7B'].lo, sl['Qwen2.5-7B'].hi)}; Julia-1 minus Qwen {s(sl['Julia-1 minus Qwen'].slope_per_0p1)} {ci(sl['Julia-1 minus Qwen'].lo, sl['Julia-1 minus Qwen'].hi)}" + r"""; this interval includes zero.}
 \label{tab:neardup}
 \begin{tabular}{lcc}
 \toprule

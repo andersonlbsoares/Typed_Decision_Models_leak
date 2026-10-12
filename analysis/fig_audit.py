@@ -139,6 +139,7 @@ names = {'typed': 'typed-decisions', 'emotion': 'DAIR Emotion', 'agnews': 'AG Ne
          'massive': 'MASSIVE', 'wikitoxic': 'WikiToxic'}
 mods = [('julia', 'Julia-1', '#C8102E', 'o', 0),
         ('jev', 'Jev 1.13 (closed, via API)', '#222222', 'X', 4),
+        ('msd1', 'Microsoft-Decision-1 (closed, via API)', '#CC79A7', 'h', 5),
         ('deberta_c', 'DeBERTa-c (reference)', '#4C72B0', 's', 1),
         ('qwen7b', 'Qwen2.5-7B-Instruct', '#55A868', 'D', 2),
         ('laya_ml', 'Laya multilingual', '#8172B2', '^', 3),
@@ -156,18 +157,22 @@ JG = pd.read_csv('results/jev_audit_gaps.csv'); JT = pd.read_csv('results/jev_ty
 r = JT[(JT.kind == 'gap') & (JT.model == 'jev')].iloc[0]; rows.append(('typed', 'jev', r.est, r.lo, r.hi))
 for _, r in JG[JG.model == 'jev'].iterrows():
     rows.append((r.dataset, 'jev', r.est, r.lo, r.hi))
+MG = pd.read_csv('results/msd1_audit_gaps.csv'); MT = pd.read_csv('results/msd1_typed_probeA.csv')
+r = MT[(MT.kind == 'gap') & (MT.model == 'msd1')].iloc[0]; rows.append(('typed', 'msd1', r.est, r.lo, r.hi))
+for _, r in MG[MG.model == 'msd1'].iterrows():
+    rows.append((r.dataset, 'msd1', r.est, r.lo, r.hi))
 P = pd.DataFrame(rows, columns=['ds', 'model', 'est', 'lo', 'hi'])
 order = ['typed', 'emotion', 'agnews', 'rotten', 'yahoo', 'banking77', 'amazon', 'imdb', 'yelp', 'massive', 'wikitoxic']
 fig, ax = plt.subplots(figsize=(6.9, 3.9))
-off = {0: 0, 1: -0.18, 2: 0.18, 3: 0.34, 4: -0.34}
+off = {0: 0, 1: -0.14, 2: 0.14, 3: 0.28, 4: -0.28, 5: -0.42}
 seen = set()
 for i, ds in enumerate(order):
     for key, lab, col, mk, o in mods:
         q = P[(P.ds == ds) & (P.model == key)]
         if q.empty:
             continue
-        r = q.iloc[0]; y = i + (-0.18 if key == 'laya_typed' else off[o])
-        foc = key in ('julia', 'jev')
+        r = q.iloc[0]; y = i + (-0.14 if key == 'laya_typed' else off[o])
+        foc = key in ('julia', 'jev', 'msd1')
         ax.errorbar(r.est, y, xerr=[[r.est - r.lo], [r.hi - r.est]], fmt=mk, color=col,
                     ms=5 if foc else 3.5, lw=1.6 if foc else 0.8, alpha=1 if foc else 0.85,
                     mfc=col if foc else 'white', mec=col,
@@ -178,12 +183,12 @@ ax.set_yticks(range(len(order)))
 ax.set_yticklabels([names[o] for o in order])
 ax.invert_yaxis()
 ax.set_xlabel('Label-standardized train − test accuracy (pp), 95% CI')
-ax.set_title("Julia-1's training-split advantage is large on typed-decisions and DAIR Emotion; Jev shows none")
+ax.set_title("Julia-1 shows a large training-split advantage; the closed Jev and Microsoft-Decision-1 do not")
 jt = P[(P.ds == 'typed') & (P.model == 'julia')].iloc[0]
 ax.text(jt.est, -0.45, f'+{jt.est:.1f}', color='#C8102E', ha='center', va='bottom', fontsize=7)
 ax.legend(loc='lower right', fontsize=6)
 ax.margins(y=0.03)
-ax.set_ylim(len(order) - 0.4, -0.9)
+ax.set_ylim(len(order) - 0.4, -0.95)
 os.makedirs('paper/figs', exist_ok=True)
 fig.savefig('paper/figs/fig_audit.pdf'); fig.savefig('paper/figs/fig_audit.png')
 plt.close(fig)

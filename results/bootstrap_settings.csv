@@ -16,3 +16,6 @@ deterministic re-run E4 (typed-decisions),analysis/r8_analysis.py,state (all que
 Jev probe-A classification family (39) + p(gold),analysis/jev.py,item,split x gold label,50000,"run as: python analysis/jev.py 50000; Holm within Jev's 39"
 Jev typed-decisions probe A,analysis/jev_typed.py,state (all questions kept together),split x workflow,50000,"run as: python analysis/jev_typed.py 50000 (pre-registered B); Julia-1 rows reproduce typed.py up to Monte Carlo error"
 Jev three-split and probe C,analysis/jev.py,item,split x gold label,50000,"Holm within Jev's ten probe-C contrasts with DeBERTa-c"
+Microsoft-Decision-1 probe-A classification family (39) + p(gold),analysis/msd1.py,item,split x gold label,50000,"run as: python analysis/msd1.py 50000; Holm within Decision-1's 39"
+Microsoft-Decision-1 typed-decisions probe A,analysis/msd1_typed.py,state (all questions kept together),split x workflow,50000,"run as: python analysis/msd1_typed.py 50000 (pre-registered B)"
+Microsoft-Decision-1 three-split and probe C,analysis/msd1.py,item,split x gold label,50000,"Holm within Decision-1's ten probe-C contrasts with DeBERTa-c"

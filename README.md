@@ -11,6 +11,7 @@ python analysis/audit.py 50000 && python analysis/typed.py 20000 && python analy
 python analysis/grid.py 10000 && python analysis/kev.py && python analysis/nimble.py && python analysis/sample_support.py
 python analysis/r8_analysis.py 50000   # third revision: dilution (E1), reference overlap (E3), deterministic re-run (E4)
 python analysis/jev.py 50000 && python analysis/jev_typed.py 50000   # Jev as a second audited model
+python analysis/msd1.py 50000 && python analysis/msd1_typed.py 50000   # Microsoft-Decision-1 as a third audited model
 python analysis/make_tables.py && python analysis/fig_audit.py   # paper/tables/*.tex, paper/figs/fig_audit.*
 ```
 
@@ -57,3 +58,16 @@ Run from this directory with Python 3.11 (numpy, pandas, scipy, statsmodels, sci
 - Results: `results/jev_audit_gaps.csv`, `jev_audit_did_39.csv`, `jev_typed_probeA.csv`, `jev_typed_bootstrap_sensitivity.csv`,
   `jev_three_split.csv`, `jev_probeC.csv`, `jev_pgold_probeA.csv` (exploratory), `jev_julia_agreement.csv` (descriptive).
 - BTZSC task-transfer accuracies (former appendix table) moved to `results/btzsc_transfer.csv`.
+
+## Revision notes (Microsoft-Decision-1)
+
+- **Microsoft-Decision-1 as a third audited model** (closed; OpenRouter `microsoft/microsoft-decision-1`, snapshot
+  `microsoft-decision-1-20261009`; post-trained from Qwen3.5-9B, training data not listed), with its own Holm families and
+  never used as a reference. Same requests as Jev (69,382 distinct requests for 79,066 decisions; 500 repeated pilot
+  requests for the determinism check, 2.2% of decisions changed; first response used). Collection code and the
+  pre-registered plan: `eval_scripts/decision1/`; predictions `predictions/msd1.json.gz`; raw responses
+  `predictions/msd1_raw.jsonl.gz`; request index (no texts) `predictions/msd1_request_index.jsonl.gz`.
+- Results: `results/msd1_audit_gaps.csv`, `msd1_audit_did_39.csv`, `msd1_typed_probeA.csv`, `msd1_typed_bootstrap_sensitivity.csv`,
+  `msd1_three_split.csv`, `msd1_probeC.csv`, `msd1_pgold_probeA.csv` (exploratory), `msd1_julia_agreement.csv` (descriptive).
+- `analysis/msd1.py` and `analysis/msd1_typed.py` are the Jev scripts with the model's file names substituted.
+- Paper-length trims: the per-split length/truncation table is `results/length_truncation_by_split.csv`.

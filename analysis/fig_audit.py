@@ -183,7 +183,7 @@ ax.set_yticks(range(len(order)))
 ax.set_yticklabels([names[o] for o in order])
 ax.invert_yaxis()
 ax.set_xlabel('Label-standardized train − test accuracy (pp), 95% CI')
-ax.set_title("Julia-1 shows a large training-split advantage; the closed Jev and Microsoft-Decision-1 do not")
+ax.set_title("Julia-1 shows the largest train$-$test gap on typed-decisions; classification gaps depend on the dataset")
 jt = P[(P.ds == 'typed') & (P.model == 'julia')].iloc[0]
 ax.text(jt.est, -0.45, f'+{jt.est:.1f}', color='#C8102E', ha='center', va='bottom', fontsize=7)
 ax.legend(loc='lower right', fontsize=6)

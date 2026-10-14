@@ -1,0 +1,5 @@
+audited_model,reference,kind,est,lo,hi,p,n1,n2,strata_used,coverage_1,coverage_2,dataset,family
+,laya_ml,gap,1.0807692307692296,-1.7696998123827412,4.0074108818011265,0.4623707525849483,2000,1066,2,1.0,1.0,rotten,outside the 39-contrast families
+julia,laya_ml,gap minus reference gap,1.5112570356472788,-2.1654080675422143,5.199343339587241,0.4217915641687166,2000,1066,2,1.0,1.0,rotten,outside the 39-contrast families
+jev,laya_ml,gap minus reference gap,-0.9384615384615393,-3.8575046904315196,1.955827861163229,0.5278694426111478,2000,1066,2,1.0,1.0,rotten,outside the 39-contrast families
+msd1,laya_ml,gap minus reference gap,-0.8198874296435275,-3.7527204502814255,2.137711069418386,0.5830283394332113,2000,1066,2,1.0,1.0,rotten,outside the 39-contrast families

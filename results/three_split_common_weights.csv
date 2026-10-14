@@ -1,0 +1,4 @@
+model,dataset,contrast,est_pairwise_weights,est_common_weights
+julia,emotion,train-test,8.91757526773701,8.34494722093504
+julia,emotion,test-val,-0.5965116801421433,-1.1685701142574636
+julia,emotion,train-val,7.554072671279958,7.176377106677576

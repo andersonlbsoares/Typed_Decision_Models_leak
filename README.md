@@ -71,3 +71,46 @@ Run from this directory with Python 3.11 (numpy, pandas, scipy, statsmodels, sci
   `msd1_three_split.csv`, `msd1_probeC.csv`, `msd1_pgold_probeA.csv` (exploratory), `msd1_julia_agreement.csv` (descriptive).
 - `analysis/msd1.py` and `analysis/msd1_typed.py` are the Jev scripts with the model's file names substituted.
 - Paper-length trims: the per-split length/truncation table is `results/length_truncation_by_split.csv`.
+
+## Table and figure map (TMLR version)
+
+| Paper item | Command (from the artifact root) | Result files |
+|---|---|---|
+| Fig. 1 (validation) | `python analysis/grid.py 10000 && python analysis/kev.py && python analysis/fig_validation.py` | `controlled_grid.csv`, `kev_*.csv` |
+| Table 1 (controlled exposure counts, probes A/B) | `python analysis/grid.py 10000` | `controlled_grid.csv` (pooled and per-seed estimates, `seeds_positive_ci`) |
+| Table 1 (probe C rows) | `python analysis/revision_tmlr.py 10000` | `controlled_grid_probeC.csv` |
+| Table 2 (sensitivity grid) | `python analysis/grid.py 10000` | `controlled_grid.csv` (`grid` = `small_n`, `heldout_1500`) |
+| Table 3 (diluted exposure) | `python analysis/r8_analysis.py 50000` | `r8_e1_power.csv`, `r8_e1_membership_by_seed.csv`, `r8_e1_base_vs_filler.csv` |
+| Table 4 (Kev, Nimble) | `python analysis/kev.py && python analysis/nimble.py` | `kev_label_standardized.csv`, `kev_bootstrap_diagnostics.csv`, `nimble.csv` |
+| Table 5 (typed-decisions) | `python analysis/typed.py 20000 && python analysis/jev_typed.py 50000 && python analysis/msd1_typed.py 50000` | `typed_probeA.csv`, `jev_typed_probeA.csv`, `msd1_typed_probeA.csv` (+ `*_bootstrap_sensitivity.csv`) |
+| Fig. 2, Tables 6 and 8 (classification audit) | `python analysis/audit.py 50000 && python analysis/jev.py 50000 && python analysis/msd1.py 50000 && python analysis/fig_audit.py` | `audit_gaps.csv`, `audit_did_39.csv`, `jev_audit_*.csv`, `msd1_audit_*.csv` |
+| Laya-ML on Rotten Tomatoes (outside the families) | `python analysis/revision_tmlr.py` | `laya_ml_rotten_outside_family.csv` |
+| Test vs validation (Emotion) | `python analysis/probe_bc.py`, `python analysis/revision_tmlr.py` | `three_split.csv`, `jev_three_split.csv`, `msd1_three_split.csv`, `three_split_common_weights.csv` |
+| Table 7 (probe C) | `python analysis/probe_bc.py` (Jev, Decision-1: `jev.py`, `msd1.py`) | `probeC.csv`, `probeC_phi_complete_only.csv`, `jev_probeC.csv`, `msd1_probeC.csv` |
+| Table 9 (Kev per source) | `python analysis/kev.py` | `kev_by_source.csv` |
+| Table 10 (lengths) | stored | `length_truncation_by_split.csv`, `len_items.csv` |
+| Table 11 (near-duplicates) | `python analysis/neardup.py` (needs typed-decisions parquet files in `data/`) | `neardup_quartiles.csv`, `neardup_slope.csv` |
+| Table 12 (BTZSC task transfer) | stored | `btzsc_transfer.csv` |
+| Emotion overlap, deterministic re-run | `python analysis/overlap_emotion.py`, `python analysis/r8_analysis.py 50000` | `emotion_overlap_*.csv`, `r8_e4_*.csv` |
+| Dilution baseline vs audit run | `python analysis/revision_tmlr.py` | `dilution_baseline_vs_audit.csv` |
+
+LaTeX tables are produced by `python analysis/make_tables.py`.
+
+## Revision notes (TMLR pre-submission reviews)
+
+- **Probe C under controlled exposure.** `analysis/revision_tmlr.py` computes probe C on the controlled-exposure checkpoints
+  (Qwen2.5-7B paraphrases of the same items, groups of probe A, minus the pre-FT checkpoint):
+  `results/controlled_grid_probeC.csv`.
+- **Laya-ML on Rotten Tomatoes.** The 39-contrast families were fixed when the only Laya Rotten Tomatoes predictions came from
+  a positive-only 1,000-record training subset (`predictions/r6_laya.json.gz`). The complete-sample run
+  (`predictions/r8_e3_laya_full.json.gz`) is reported outside the families: `results/laya_ml_rotten_outside_family.csv`.
+- **Three-split weights.** `results/three_split_common_weights.csv` shows that the Emotion train/test/validation contrasts are
+  additive with one pooled label distribution; the paper's pairwise contrasts use the weights of each pair (Eq. 1).
+- **Dilution baseline.** `results/dilution_baseline_vs_audit.csv`: same items, labels and weights as the audit; 3 training and
+  3 test decisions differ on Emotion (+9.2 vs +8.9 pp).
+- **API identifiers.** Every Jev and Microsoft-Decision-1 response in `predictions/*_raw.jsonl.gz` carries the returned
+  `body.model` (`typesafe/jev-1.13-20260917`, `microsoft/microsoft-decision-1-20261009`) and `body.provider`, and the
+  collection timestamp `t` (Unix seconds).
+- **Kev fresh records.** `eval_scripts/r7_kev_data.py`: members are 300 clean records per source sampled (seed 0) from the
+  released v7 training partition; fresh records come from `kev.suite --exclude-states-from` the frozen v7 suite (exact
+  normalized-text hashes of all 12,576 training and 968 calibration records), with records sharing an id removed.

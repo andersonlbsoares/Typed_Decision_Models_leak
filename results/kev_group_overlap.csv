@@ -1,0 +1,10 @@
+model,group_1,group_2,items_1,items_2,shared_items,shared_question_ids
+kev-0.8b,members,fresh,3000,3000,0,0
+kev-0.8b,members,heldout,3000,1400,0,0
+kev-0.8b,fresh,heldout,3000,1400,0,0
+kev-4b,members,fresh,3000,3000,0,0
+kev-4b,members,heldout,3000,1400,0,0
+kev-4b,fresh,heldout,3000,1400,0,0
+kev-9b,members,fresh,3000,3000,0,0
+kev-9b,members,heldout,3000,1400,0,0
+kev-9b,fresh,heldout,3000,1400,0,0

@@ -93,8 +93,12 @@ Run from this directory with Python 3.11 (numpy, pandas, scipy, statsmodels, sci
 | Table 12 (BTZSC task transfer) | stored | `btzsc_transfer.csv` |
 | Emotion overlap, deterministic re-run | `python analysis/overlap_emotion.py`, `python analysis/r8_analysis.py 50000` | `emotion_overlap_*.csv`, `r8_e4_*.csv` |
 | Dilution baseline vs audit run | `python analysis/revision_tmlr.py` | `dilution_baseline_vs_audit.csv` |
+| Probe A on fixed items, S1 vs S2 (Section 4.1) | `python analysis/revision_tmlr_r2.py 10000` | `controlled_grid_fixed_Ete.csv` |
+| API decision ties, tie-rule sensitivity, repeat checks (Appendix) | `python analysis/revision_tmlr_r2.py` | `api_decision_ties.csv`, `api_repeat_checks.csv` |
+| Kev group disjointness (Section 4.3) | `python analysis/revision_tmlr_r2.py` | `kev_group_overlap.csv` |
 
-LaTeX tables are produced by `python analysis/make_tables.py`.
+LaTeX tables are produced by `python analysis/make_tables.py` (conference layout); the TMLR tables use the same result files.
+Table 10's Qwen column counts all 2,000 items per split (`qwen_trunc` in `length_truncation_by_split.csv`).
 
 ## Revision notes (TMLR pre-submission reviews)
 
@@ -114,3 +118,16 @@ LaTeX tables are produced by `python analysis/make_tables.py`.
 - **Kev fresh records.** `eval_scripts/r7_kev_data.py`: members are 300 clean records per source sampled (seed 0) from the
   released v7 training partition; fresh records come from `kev.suite --exclude-states-from` the frozen v7 suite (exact
   normalized-text hashes of all 12,576 training and 968 calibration records), with records sharing an id removed.
+
+## Revision notes (second TMLR pre-submission review)
+
+- **Fixed evaluation items across scenarios.** Probe A uses test items 501-1,000 in S1 and 1-500 in S2. `analysis/revision_tmlr_r2.py`
+  recomputes it on test items 1-500 in both scenarios, so S1 and S2 differ only in the fine-tuning data, and estimates the
+  S1-minus-S2 change on the same items: positive in 12/12 DeBERTa and 8/8 Julia-1 configurations (`results/controlled_grid_fixed_Ete.csv`).
+- **API decision rules.** Choice: the returned key. Yes/no: `true` if p > 0.5, `false` if p < 0.5, scored incorrect if p = 0.5.
+  Score: the most probable level, with ties resolved towards the returned expected score and then the lower level (`analysis/jev.py`).
+  `results/api_decision_ties.csv` counts p = 0.5 and tied score answers and gives typed-decisions gaps under a gold-independent
+  alternative rule; `results/api_repeat_checks.csv` lists the 500 repeated requests per model (seeded sample) and their transitions.
+- **Kev groups.** `results/kev_group_overlap.csv`: no underlying source item is shared by any pair of members, fresh and dev/cal.
+- **Banking77 label universe.** The audit uses the 72 of 77 intents with a BTZSC hypothesis; excluded: `card_linking`,
+  `exchange_via_app`, `get_physical_card`, `supported_cards_and_currencies`, `top_up_by_bank_transfer_charge`.

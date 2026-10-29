@@ -1,0 +1,19 @@
+model,family,branch,n
+jev,classification probe A,choice,39066
+jev,classification probes B/C,choice,32000
+jev,typed-decisions,choice,2400
+jev,typed-decisions,noul,2375
+jev,typed-decisions,noul_p_eq_0.5,25
+jev,typed-decisions,tie_by_score,4
+jev,typed-decisions,tie_lowest,3
+jev,typed-decisions,unique_max,3193
+jev,all stored typed + probe-A decisions,reproduced,47066
+jev,all stored typed + probe-A decisions,mismatch,0
+msd1,classification probe A,choice,39066
+msd1,classification probes B/C,choice,32000
+msd1,typed-decisions,choice,2400
+msd1,typed-decisions,noul,2400
+msd1,typed-decisions,tie_by_score,53
+msd1,typed-decisions,unique_max,3147
+msd1,all stored typed + probe-A decisions,reproduced,47066
+msd1,all stored typed + probe-A decisions,mismatch,0

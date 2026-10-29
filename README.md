@@ -96,6 +96,8 @@ Run from this directory with Python 3.11 (numpy, pandas, scipy, statsmodels, sci
 | Probe A on fixed items, S1 vs S2 (Section 4.1) | `python analysis/revision_tmlr_r2.py 10000` | `controlled_grid_fixed_Ete.csv` |
 | API decision ties, tie-rule sensitivity, repeat checks (Appendix) | `python analysis/revision_tmlr_r2.py` | `api_decision_ties.csv`, `api_repeat_checks.csv` |
 | Kev group disjointness (Section 4.3) | `python analysis/revision_tmlr_r2.py` | `kev_group_overlap.csv` |
+| API score-tie branches and decision reconstruction from raw responses (Appendix) | `python analysis/revision_tmlr_r3.py r05` | `api_tie_resolution.csv`, `api_tie_examples.csv` |
+| Qwen typed-decisions prompt lengths, pinned tokenizer (Appendix) | `python analysis/revision_tmlr_r3.py r06` | `typed_input_lengths_qwen.csv` |
 
 LaTeX tables are produced by `python analysis/make_tables.py` (conference layout); the TMLR tables use the same result files.
 Table 10's Qwen column counts all 2,000 items per split (`qwen_trunc` in `length_truncation_by_split.csv`).
@@ -123,7 +125,8 @@ Table 10's Qwen column counts all 2,000 items per split (`qwen_trunc` in `length
 
 - **Fixed evaluation items across scenarios.** Probe A uses test items 501-1,000 in S1 and 1-500 in S2. `analysis/revision_tmlr_r2.py`
   recomputes it on test items 1-500 in both scenarios, so S1 and S2 differ only in the fine-tuning data, and estimates the
-  S1-minus-S2 change on the same items: positive in 12/12 DeBERTa and 8/8 Julia-1 configurations (`results/controlled_grid_fixed_Ete.csv`).
+  S1-minus-S2 change on the same items (paired: per-item S1-minus-S2 values, same stratified bootstrap): positive with a 95% interval
+  wholly above zero in 12/12 DeBERTa and 8/8 Julia-1 configurations (`results/controlled_grid_fixed_Ete.csv`, rows `A_S1-A_S2(E_tr,E_te)`).
 - **API decision rules.** Choice: the returned key. Yes/no: `true` if p > 0.5, `false` if p < 0.5, scored incorrect if p = 0.5.
   Score: the most probable level, with ties resolved towards the returned expected score and then the lower level (`analysis/jev.py`).
   `results/api_decision_ties.csv` counts p = 0.5 and tied score answers and gives typed-decisions gaps under a gold-independent
@@ -131,3 +134,17 @@ Table 10's Qwen column counts all 2,000 items per split (`qwen_trunc` in `length
 - **Kev groups.** `results/kev_group_overlap.csv`: no underlying source item is shared by any pair of members, fresh and dev/cal.
 - **Banking77 label universe.** The audit uses the 72 of 77 intents with a BTZSC hypothesis; excluded: `card_linking`,
   `exchange_via_app`, `get_physical_card`, `supported_cards_and_currencies`, `top_up_by_bank_transfer_charge`.
+
+## Revision notes (third TMLR pre-submission review)
+
+- **Score ties (Jev, Microsoft-Decision-1).** With p_j the returned probability of level j, s the returned expected score and
+  M the set of levels whose returned probability equals the maximum exactly, the decision is the level in M closest to s, then the
+  lowest (`decide` in `analysis/jev.py` and `analysis/msd1.py`); no step uses the gold label. `analysis/revision_tmlr_r3.py r05`
+  re-applies the rule to the stored first responses, reproduces all 47,066 stored typed-decisions and probe-A decisions of each
+  model, and counts the branch used: Jev 7 ties (4 settled by s, 3 with two maximal levels equidistant from s, lowest taken),
+  Microsoft-Decision-1 53 ties (all settled by s); every tied answer carried s.
+- **Qwen inputs on typed-decisions.** The 1,500-character cut (`eval_scripts/r6_qwen.py`, `e3_qwen_full.py`) applies to
+  classification texts before prompt assembly. `eval_scripts/r3_qwen.py` passes the full JSON state; `revision_tmlr_r3.py r06`
+  rebuilds its prompts and counts them with the pinned Qwen tokenizer: at most 674 (train) and 639 (test) tokens, none at or
+  above vLLM's max_model_len of 4,096. Julia-1 runs with strict encoding (`FastEngine(strict_encoding=True)`), which raises
+  instead of truncating; no typed-decisions request failed.

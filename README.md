@@ -1,6 +1,6 @@
 # Typed-decision models: output-only exposure diagnostics
 
-Anonymized research artifact for the submission *Output-Only Diagnostics of Training-Split Exposure in Typed-Decision Models*.
+Research artifact for the paper *Output-Only Diagnostics of Benchmark Split Exposure in Typed-Decision Models* (Anderson Luis Bento Soares, Gabriel Bianchin de Oliveira, Ruben Interian and Zanoni Dias; Institute of Computing, Unicamp).
 It contains the evaluation scripts, per-item predictions, fixed sample IDs, the analysis code and the machine-readable results behind every table and figure. Public benchmark data are not redistributed; scripts that need them say which file and revision to place in `data/`.
 
 Quick start (all tables from the stored predictions, no GPU needed):
@@ -148,3 +148,11 @@ Table 10's Qwen column counts all 2,000 items per split (`qwen_trunc` in `length
   rebuilds its prompts and counts them with the pinned Qwen tokenizer: at most 674 (train) and 639 (test) tokens, none at or
   above vLLM's max_model_len of 4,096. Julia-1 runs with strict encoding (`FastEngine(strict_encoding=True)`), which raises
   instead of truncating; no typed-decisions request failed.
+
+## License
+
+Code (`analysis/`, `eval_scripts/`) is released under the MIT License (see [`LICENSE`](LICENSE)).
+Predictions, result tables and recorded API responses are released under CC BY 4.0.
+Benchmark texts are not covered by these licenses: the probe-C paraphrase files
+(`predictions/r4_para.json`, `predictions/r7_para_second.json`) contain original benchmark texts
+and remain subject to the terms of the source datasets. See [`DATA_LICENSE.md`](DATA_LICENSE.md).
